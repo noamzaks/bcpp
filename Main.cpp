@@ -13,7 +13,6 @@ int main() {
     std::cout << Calculator::calculate(2, '*', 3) << std::endl;
     std::cout << Calculator::calculate(2, '/', 3) << std::endl;
 
-    // Should raise an exception.
     try {
         std::cout << Calculator::calculate(2, 'x', 3) << std::endl;
     }
