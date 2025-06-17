@@ -1,7 +1,7 @@
 #include "String.h"
 #include <cstring>
 
-String::String(const char* s) : m_length(strlen(s)), m_s(new char[m_length + 1]) {
+String::String(const char* s) : m_length(strlen(s)), m_s(new char[strlen(s) + 1]) {
     memcpy(m_s, s, m_length + 1);
 }
 
@@ -17,7 +17,7 @@ String& String::operator=(const String& other) {
     size_t length = other.m_length;
     char* s = new char[length + 1];
     memcpy(s, other.m_s, length + 1);
-    this->~String();
+    delete[] m_s;
     m_s = s;
     m_length = length;
     return *this;
