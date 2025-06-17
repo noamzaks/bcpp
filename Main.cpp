@@ -2,16 +2,14 @@
 #include <string>
 #include <iomanip>
 
+// The table width and height to print in the program.
 static constexpr int TABLE_SIZE = 11;
 
-/**
- * Simple program to print the multiplication table of the given size.
- */
-void printMultiplicationTable(int row_count, int column_count) {
-    int cellWidth = (int)std::to_string(row_count * column_count).length();
+void printMultiplicationTable(uint64_t rowCount, uint64_t columnCount) {
+    size_t cellWidth = std::to_string(rowCount * columnCount).length();
 
-    for (int row = 1; row <= row_count; row++) {
-        for (int column = 1; column <= column_count; column++) {
+    for (uint64_t row = 1; row <= rowCount; row++) {
+        for (uint64_t column = 1; column <= columnCount; column++) {
             std::cout << std::setw(cellWidth) << std::left << (row * column) << " ";
         }
         std::cout << std::endl;
