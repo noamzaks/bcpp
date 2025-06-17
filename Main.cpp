@@ -1,6 +1,7 @@
-#include <iostream>
-#include <thread>
 #include <future>
+#include <iostream>
+
+#include "PrimeCheck.h"
 
 // The size of the test array for the program itself.
 static constexpr int ARRAY_TEST_SIZE = 20;
@@ -10,41 +11,11 @@ static constexpr int THREAD_COUNT = 4;
 
 // The amount of consecutive numbers each thread searches for a primes within.
 // This will be scaled by the amount of primes searched for.
-static constexpr int SEARCH_RANGE_SIZE = 10;
-
-constexpr uint64_t SMALL_PRIMES[] = {2, 3, 5, 7};
-
-/**
- * @return true if the number is a prime
- */
-bool isPrime(uint64_t n) {
-    if (n <= 1) {
-        return false;
-    }
-
-    // Check small primes initially.
-    for (uint64_t i : SMALL_PRIMES) {
-        if (n == i) {
-            return true;
-        }
-        if (n % i == 0) {
-            return false;
-        }
-    }
-
-    // Can skip even numbers now, since we already checked 2.
-    for (uint64_t i = 3; i * i <= n; i += 2) {
-        if (n % i == 0) {
-            return false;
-        }
-    }
-
-    return true;
-}
+static constexpr int SINGLE_PRIME_SEARCH_RANGE = 10;
 
 /**
  * Fills the array with primes in the given range.
- * 
+ *
  * @return whether enough primes were found to fill the array.
  */
 bool fillPrimesInRange(uint64_t* array, size_t arrayLength, uint64_t start, uint64_t end) {
@@ -62,8 +33,9 @@ bool fillPrimesInRange(uint64_t* array, size_t arrayLength, uint64_t start, uint
  * Threaded function to fill the array with different primes.
  *
  * Creates THREAD_COUNT thread each searching in a separate range for primes.
+ * WARNING: This (pseudo)-fast function doesn't always work, you should tune SINGLE_PRIME_SEARCH_RANGE.
  *
- * @return 0 if successful or a negative number if an error occurred.
+ * @return whether succesful.
  */
 int fillArrayWithPrimes(uint64_t* array, size_t arrayLength) {
     std::future<bool> threads[THREAD_COUNT];
@@ -74,15 +46,15 @@ int fillArrayWithPrimes(uint64_t* array, size_t arrayLength) {
     uint64_t rangeStart = 2;
     uint64_t rangeEnd = 2;
 
-    for (int i = 0; i < THREAD_COUNT; i++) {
+    for (int thread_index = 0; thread_index < THREAD_COUNT; thread_index++) {
         // Make sure last thread finishes the array.
-        if (i == THREAD_COUNT - 1) {
+        if (thread_index == THREAD_COUNT - 1) {
             currentEnd = arrayLength;
         }
 
-        rangeEnd = rangeStart + SEARCH_RANGE_SIZE * (currentEnd - currentStart);
-        threads[i] = std::async(fillPrimesInRange, array + currentStart, currentEnd - currentStart,
-                                 rangeStart, rangeEnd);
+        rangeEnd = rangeStart + SINGLE_PRIME_SEARCH_RANGE * (currentEnd - currentStart);
+        threads[thread_index] =
+            std::async(fillPrimesInRange, array + currentStart, currentEnd - currentStart, rangeStart, rangeEnd);
         rangeStart = rangeEnd;
 
         currentStart += chunkSize;
@@ -108,8 +80,8 @@ void printArray(uint64_t* array, size_t arrayLength) {
 }
 
 int main() {
-    uint64_t* array = new uint64_t[ARRAY_TEST_SIZE];
-    
+    auto array = new uint64_t[ARRAY_TEST_SIZE];
+
     int fillingOk = fillArrayWithPrimes(array, ARRAY_TEST_SIZE);
     if (fillingOk != 0) {
         delete[] array;
