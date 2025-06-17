@@ -7,8 +7,8 @@ class Complex
     Complex();
     Complex(double real, double imaginary);
 
-    double getReal();
-    double getImaginary();
+    double getReal() const;
+    double getImaginary() const;
 
     void setReal(double real);
     void setImaginary(double imaginary);
@@ -17,6 +17,9 @@ class Complex
     Complex& operator+=(const Complex& other);
     Complex& operator-=(const Complex& other);
     Complex& operator*=(const Complex& other);
+    Complex operator+(const Complex& other);
+    Complex operator-(const Complex& other);
+    Complex operator*(const Complex& other);
 
     /** Prints the complex number to standard output. */
     void print();
