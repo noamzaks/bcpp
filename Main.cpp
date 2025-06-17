@@ -1,5 +1,6 @@
 #include <future>
 #include <iostream>
+#include <vector>
 
 #include "PrimeCheck.h"
 
@@ -25,15 +26,15 @@ static constexpr int SINGLE_PRIME_SEARCH_RANGE = 10;
  *
  * @return whether enough primes were found to fill the array.
  */
-bool fillPrimesInRange(uint64_t* array, size_t arrayLength, uint64_t start, uint64_t end) {
-    size_t current = 0;
-    for (uint64_t n = start; n < end && current < arrayLength; n++) {
+bool fillPrimesInRange(std::vector<uint64_t>* array, size_t startIndex, size_t endIndex, uint64_t start, uint64_t end) {
+    size_t current = startIndex;
+    for (uint64_t n = start; n < end && current < endIndex; n++) {
         if (isPrime(n)) {
-            array[current] = n;
+            array->at(current) = n;
             current++;
         }
     }
-    return current == arrayLength;
+    return current == endIndex;
 }
 
 /**
@@ -53,9 +54,10 @@ std::tuple<uint64_t, uint64_t> getRangeStartAndEnd(size_t index, size_t rangeSiz
  *
  * @return whether succesful.
  */
-int fillArrayWithPrimes(uint64_t* array, size_t arrayLength) {
+int fillArrayWithPrimes(std::vector<uint64_t>& array) {
     std::future<bool> threads[THREAD_COUNT];
 
+    size_t arrayLength = array.size();
     uint64_t chunkSize = arrayLength / THREAD_COUNT;
     size_t currentStart = 0;
     size_t currentEnd = chunkSize;
@@ -67,8 +69,7 @@ int fillArrayWithPrimes(uint64_t* array, size_t arrayLength) {
         }
 
         auto [rangeStart, rangeEnd] = getRangeStartAndEnd(threadIndex, chunkSize * SINGLE_PRIME_SEARCH_RANGE);
-        threads[threadIndex] =
-            std::async(fillPrimesInRange, array + currentStart, currentEnd - currentStart, rangeStart, rangeEnd);
+        threads[threadIndex] = std::async(fillPrimesInRange, &array, currentStart, currentEnd, rangeStart, rangeEnd);
 
         currentStart += chunkSize;
         currentEnd += chunkSize;
@@ -85,22 +86,19 @@ int fillArrayWithPrimes(uint64_t* array, size_t arrayLength) {
 }
 
 /** Prints the given array in a single line. */
-void printArray(const uint64_t* array, size_t arrayLength) {
-    for (size_t i = 0; i < arrayLength; i++) {
+void printArray(const std::vector<uint64_t>& array) {
+    for (size_t i = 0; i < array.size(); i++) {
         std::cout << array[i] << " ";
     }
     std::cout << std::endl;
 }
 
 int main() {
-    auto array = new uint64_t[ARRAY_TEST_SIZE];
+    auto array = std::vector<uint64_t>(ARRAY_TEST_SIZE);
 
-    int fillingOk = fillArrayWithPrimes(array, ARRAY_TEST_SIZE);
+    int fillingOk = fillArrayWithPrimes(array);
     if (fillingOk != 0) {
-        delete[] array;
         return fillingOk;
     }
-    printArray(array, ARRAY_TEST_SIZE);
-
-    delete[] array;
+    printArray(array);
 }
