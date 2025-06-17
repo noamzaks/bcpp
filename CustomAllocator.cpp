@@ -12,6 +12,12 @@ AllocationInformation::AllocationInformation(size_t size, AllocationInformation*
     : m_size(size), m_next(next) {
     m_previous = previous;
     m_next = next;
+    updateGlobalListOnCreation();
+}
+
+AllocationInformation::~AllocationInformation() {
+    updateNeighborsOnDeletion();
+    updateGlobalListOnDeletion();
 }
 
 size_t AllocationInformation::size() const {
@@ -88,9 +94,7 @@ void* operator new(size_t n) {
         throw std::bad_alloc();
     }
 
-    AllocationInformation* info = (AllocationInformation*)base;
-    *info = AllocationInformation(n, tail);
-    info->updateGlobalListOnCreation();
+    AllocationInformation* info = new (base) AllocationInformation(n, tail);
 
     return info->getAddress();
 }
@@ -98,7 +102,6 @@ void* operator new(size_t n) {
 /** Frees the given data and updates the allocation information linked list. */
 void operator delete(void* p) noexcept {
     AllocationInformation* info = AllocationInformation::getInformation(p);
-    info->updateNeighborsOnDeletion();
-    info->updateGlobalListOnDeletion();
+    info->~AllocationInformation();
     free(info);
 }

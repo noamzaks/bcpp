@@ -1,10 +1,11 @@
 #include <cstddef>
 
-class AllocationInformation
+class AllocationInformation final
 {
   public:
     AllocationInformation(size_t size, AllocationInformation* preivous = nullptr,
                           AllocationInformation* next = nullptr);
+    ~AllocationInformation();
 
     size_t size() const;
     AllocationInformation* getNext() const;
