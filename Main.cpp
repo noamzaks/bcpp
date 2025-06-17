@@ -4,18 +4,22 @@
 
 // Check out the calculator.
 int main() {
-    Calculator calculator;
-    std::cout << calculator.add(2, 3) << std::endl;
-    std::cout << calculator.subtract(2, 3) << std::endl;
-    std::cout << calculator.multiply(2, 3) << std::endl;
-    std::cout << calculator.divide(2, 3) << std::endl;
-    std::cout << calculator.calculate(2, '+', 3) << std::endl;
-    std::cout << calculator.calculate(2, '-', 3) << std::endl;
-    std::cout << calculator.calculate(2, '*', 3) << std::endl;
-    std::cout << calculator.calculate(2, '/', 3) << std::endl;
+    std::cout << Calculator::add(2, 3) << std::endl;
+    std::cout << Calculator::subtract(2, 3) << std::endl;
+    std::cout << Calculator::multiply(2, 3) << std::endl;
+    std::cout << Calculator::divide(2, 3) << std::endl;
+    std::cout << Calculator::calculate(2, '+', 3) << std::endl;
+    std::cout << Calculator::calculate(2, '-', 3) << std::endl;
+    std::cout << Calculator::calculate(2, '*', 3) << std::endl;
+    std::cout << Calculator::calculate(2, '/', 3) << std::endl;
 
     // Should raise an exception.
-    std::cout << calculator.calculate(2, 'x', 3) << std::endl;
+    try {
+        std::cout << Calculator::calculate(2, 'x', 3) << std::endl;
+    }
+    catch (CalculatorUnknownOperationException& e) {
+        std::cout << "Correct exception thrown!" << std::endl;
+    }
 
     return 0;
 }

@@ -22,12 +22,12 @@ class CalculatorUnknownOperationException : public CalculatorException
     CalculatorUnknownOperationException(const std::string& message);
 };
 
-class Calculator
+class Calculator final
 {
   public:
-    double add(double x, double y);
-    double subtract(double x, double y);
-    double multiply(double x, double y);
-    double divide(double x, double y);
-    double calculate(double x, char operation, double y);
+    static double add(double x, double y);
+    static double subtract(double x, double y);
+    static double multiply(double x, double y);
+    static double divide(double x, double y);
+    static double calculate(double x, char operation, double y);
 };
