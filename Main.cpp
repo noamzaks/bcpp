@@ -16,6 +16,13 @@ static constexpr int SINGLE_PRIME_SEARCH_RANGE = 10;
 /**
  * Fills the array with primes in the given range.
  *
+ * Looks for the first `arrayLength` primes in the range from start (inclusive) to end (non-inclusive).
+ *
+ * @param array a pointer to store the primes in.
+ * @param arrayLength the amount of primes to insert into the array.
+ * @param start the start of the range to find primes in (inclusive).
+ * @param end the end of the range to find primes in (non-inclusive).
+ *
  * @return whether enough primes were found to fill the array.
  */
 bool fillPrimesInRange(uint64_t* array, size_t arrayLength, uint64_t start, uint64_t end) {
@@ -29,9 +36,13 @@ bool fillPrimesInRange(uint64_t* array, size_t arrayLength, uint64_t start, uint
     return current == arrayLength;
 }
 
-std::tuple<uint64_t, uint64_t> getRangeForThread(size_t threadIndex, size_t chunkSize) {
-    return std::make_tuple(threadIndex * chunkSize * SINGLE_PRIME_SEARCH_RANGE,
-                           (threadIndex + 1) * chunkSize * SINGLE_PRIME_SEARCH_RANGE);
+/**
+ * Returns the `index`-th consecutive `rangeSize` start and end indices.
+ *
+ * @example getRangeStartAndEnd(4, 3) returns (12, 16).
+ */
+std::tuple<uint64_t, uint64_t> getRangeStartAndEnd(size_t index, size_t rangeSize) {
+    return std::make_tuple(index * rangeSize, (index + 1) * rangeSize);
 }
 
 /**
@@ -55,7 +66,7 @@ int fillArrayWithPrimes(uint64_t* array, size_t arrayLength) {
             currentEnd = arrayLength;
         }
 
-        auto [rangeStart, rangeEnd] = getRangeForThread(threadIndex, chunkSize);
+        auto [rangeStart, rangeEnd] = getRangeStartAndEnd(threadIndex, chunkSize * SINGLE_PRIME_SEARCH_RANGE);
         threads[threadIndex] =
             std::async(fillPrimesInRange, array + currentStart, currentEnd - currentStart, rangeStart, rangeEnd);
 
