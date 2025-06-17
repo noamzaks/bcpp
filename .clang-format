@@ -5,6 +5,7 @@ IndentWidth: 4
 Language: Cpp
 DerivePointerAlignment: false
 PointerAlignment: Left
+AlwaysBreakTemplateDeclarations: true
 BraceWrapping:
     AfterFunction: false
     AfterControlStatement: Never
