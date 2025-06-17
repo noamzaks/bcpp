@@ -25,44 +25,39 @@ void Complex::setImaginary(double imaginary) {
     m_imaginary = imaginary;
 }
 
-bool Complex::operator==(const Complex& other) {
+bool Complex::operator==(const Complex& other) const {
     return m_real == other.m_real && m_imaginary == other.m_imaginary;
 }
 
 Complex& Complex::operator+=(const Complex& other) {
-    m_real += other.m_real;
-    m_imaginary += other.m_imaginary;
+    *this = *this + other;
     return *this;
 }
 
 Complex& Complex::operator-=(const Complex& other) {
-    m_real -= other.m_real;
-    m_imaginary -= other.m_imaginary;
+    *this = *this - other;
     return *this;
 }
 
 Complex& Complex::operator*=(const Complex& other) {
-    double real = m_real * other.m_real - m_imaginary * other.m_imaginary;
-    double imaginary = m_real * other.m_imaginary + m_imaginary * other.m_real;
-    m_real = real;
-    m_imaginary = imaginary;
+    *this = *this * other;
     return *this;
 }
 
-Complex Complex::operator+(const Complex& other) {
+Complex Complex::operator+(const Complex& other) const {
     return Complex(m_real + other.m_real, m_imaginary + other.m_imaginary);
 }
 
-Complex Complex::operator-(const Complex& other) {
+Complex Complex::operator-(const Complex& other) const {
     return Complex(m_real - other.m_real, m_imaginary - other.m_imaginary);
 }
 
-Complex Complex::operator*(const Complex& other) {
+Complex Complex::operator*(const Complex& other) const {
     return Complex(m_real * other.m_real - m_imaginary * other.m_imaginary,
                    m_real * other.m_imaginary + m_imaginary * other.m_real);
 }
 
-void Complex::print() {
+void Complex::print() const {
     std::cout << m_real;
     if (m_imaginary >= 0) {
         std::cout << '+';

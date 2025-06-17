@@ -13,16 +13,16 @@ class Complex
     void setReal(double real);
     void setImaginary(double imaginary);
 
-    bool operator==(const Complex& other);
+    bool operator==(const Complex& other) const;
     Complex& operator+=(const Complex& other);
     Complex& operator-=(const Complex& other);
     Complex& operator*=(const Complex& other);
-    Complex operator+(const Complex& other);
-    Complex operator-(const Complex& other);
-    Complex operator*(const Complex& other);
+    Complex operator+(const Complex& other) const;
+    Complex operator-(const Complex& other) const;
+    Complex operator*(const Complex& other) const;
 
     /** Prints the complex number to standard output. */
-    void print();
+    void print() const;
 
   private:
     double m_real;

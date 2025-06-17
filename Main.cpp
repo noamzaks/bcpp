@@ -15,4 +15,5 @@ int main() {
 
     x *= y;
     x.print();
+    (x + y).print();
 }
