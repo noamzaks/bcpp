@@ -29,6 +29,11 @@ bool fillPrimesInRange(uint64_t* array, size_t arrayLength, uint64_t start, uint
     return current == arrayLength;
 }
 
+std::tuple<uint64_t, uint64_t> getRangeForThread(size_t threadIndex, size_t chunkSize) {
+    return std::make_tuple(threadIndex * chunkSize * SINGLE_PRIME_SEARCH_RANGE,
+                           (threadIndex + 1) * chunkSize * SINGLE_PRIME_SEARCH_RANGE);
+}
+
 /**
  * Threaded function to fill the array with different primes.
  *
@@ -43,19 +48,16 @@ int fillArrayWithPrimes(uint64_t* array, size_t arrayLength) {
     uint64_t chunkSize = arrayLength / THREAD_COUNT;
     size_t currentStart = 0;
     size_t currentEnd = chunkSize;
-    uint64_t rangeStart = 2;
-    uint64_t rangeEnd = 2;
 
-    for (int thread_index = 0; thread_index < THREAD_COUNT; thread_index++) {
+    for (int threadIndex = 0; threadIndex < THREAD_COUNT; threadIndex++) {
         // Make sure last thread finishes the array.
-        if (thread_index == THREAD_COUNT - 1) {
+        if (threadIndex == THREAD_COUNT - 1) {
             currentEnd = arrayLength;
         }
 
-        rangeEnd = rangeStart + SINGLE_PRIME_SEARCH_RANGE * (currentEnd - currentStart);
-        threads[thread_index] =
+        auto [rangeStart, rangeEnd] = getRangeForThread(threadIndex, chunkSize);
+        threads[threadIndex] =
             std::async(fillPrimesInRange, array + currentStart, currentEnd - currentStart, rangeStart, rangeEnd);
-        rangeStart = rangeEnd;
 
         currentStart += chunkSize;
         currentEnd += chunkSize;
