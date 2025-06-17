@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 /**
  * Simple program to input a number and print its square root.
