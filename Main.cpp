@@ -74,7 +74,7 @@ int fillArrayWithPrimes(uint64_t* array, size_t arrayLength) {
 }
 
 /** Prints the given array in a single line. */
-void printArray(uint64_t* array, size_t arrayLength) {
+void printArray(const uint64_t* array, size_t arrayLength) {
     for (size_t i = 0; i < arrayLength; i++) {
         std::cout << array[i] << " ";
     }
