@@ -12,15 +12,28 @@ static constexpr int THREAD_COUNT = 4;
 // This will be scaled by the amount of primes searched for.
 static constexpr int SEARCH_RANGE_SIZE = 10;
 
+constexpr uint64_t SMALL_PRIMES[] = {2, 3, 5, 7};
+
 /**
  * @return true if the number is a prime
  */
-bool isPrime(int n) {
+bool isPrime(uint64_t n) {
     if (n <= 1) {
         return false;
     }
 
-    for (int i = 2; i * i <= n; i++) {
+    // Check small primes initially.
+    for (uint64_t i : SMALL_PRIMES) {
+        if (n == i) {
+            return true;
+        }
+        if (n % i == 0) {
+            return false;
+        }
+    }
+
+    // Can skip even numbers now, since we already checked 2.
+    for (uint64_t i = 3; i * i <= n; i += 2) {
         if (n % i == 0) {
             return false;
         }
@@ -34,9 +47,9 @@ bool isPrime(int n) {
  * 
  * @return whether enough primes were found to fill the array.
  */
-bool fillPrimesInRange(int* array, int arrayLength, int start, int end) {
-    int current = 0;
-    for (int n = start; n < end && current < arrayLength; n++) {
+bool fillPrimesInRange(uint64_t* array, size_t arrayLength, uint64_t start, uint64_t end) {
+    size_t current = 0;
+    for (uint64_t n = start; n < end && current < arrayLength; n++) {
         if (isPrime(n)) {
             array[current] = n;
             current++;
@@ -52,14 +65,14 @@ bool fillPrimesInRange(int* array, int arrayLength, int start, int end) {
  *
  * @return 0 if successful or a negative number if an error occurred.
  */
-int fillArrayWithPrimes(int* array, int arrayLength) {
+int fillArrayWithPrimes(uint64_t* array, size_t arrayLength) {
     std::future<bool> threads[THREAD_COUNT];
 
-    int chunkSize = arrayLength / THREAD_COUNT;
-    int currentStart = 0;
-    int currentEnd = chunkSize;
-    int rangeStart = 2;
-    int rangeEnd = 2;
+    uint64_t chunkSize = arrayLength / THREAD_COUNT;
+    size_t currentStart = 0;
+    size_t currentEnd = chunkSize;
+    uint64_t rangeStart = 2;
+    uint64_t rangeEnd = 2;
 
     for (int i = 0; i < THREAD_COUNT; i++) {
         // Make sure last thread finishes the array.
@@ -87,15 +100,15 @@ int fillArrayWithPrimes(int* array, int arrayLength) {
 }
 
 /** Prints the given array in a single line. */
-void printArray(int* array, int arrayLength) {
-    for (int i = 0; i < arrayLength; i++) {
+void printArray(uint64_t* array, size_t arrayLength) {
+    for (size_t i = 0; i < arrayLength; i++) {
         std::cout << array[i] << " ";
     }
     std::cout << std::endl;
 }
 
 int main() {
-    int* array = new int[ARRAY_TEST_SIZE];
+    uint64_t* array = new uint64_t[ARRAY_TEST_SIZE];
     
     int fillingOk = fillArrayWithPrimes(array, ARRAY_TEST_SIZE);
     if (fillingOk != 0) {
