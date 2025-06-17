@@ -34,15 +34,15 @@ bool isPrime(int n) {
  * 
  * @return whether enough primes were found to fill the array.
  */
-bool fillPrimesInRange(int* array, int array_length, int start, int end) {
+bool fillPrimesInRange(int* array, int arrayLength, int start, int end) {
     int current = 0;
-    for (int n = start; n < end && current < array_length; n++) {
+    for (int n = start; n < end && current < arrayLength; n++) {
         if (isPrime(n)) {
             array[current] = n;
             current++;
         }
     }
-    return current == array_length;
+    return current == arrayLength;
 }
 
 /**
@@ -52,28 +52,28 @@ bool fillPrimesInRange(int* array, int array_length, int start, int end) {
  *
  * @return 0 if successful or a negative number if an error occurred.
  */
-int fillArrayWithPrimes(int* array, int array_length) {
+int fillArrayWithPrimes(int* array, int arrayLength) {
     std::future<bool> threads[THREAD_COUNT];
 
-    int chunk_size = array_length / THREAD_COUNT;
-    int current_start = 0;
-    int current_end = chunk_size;
-    int range_start = 2;
-    int range_end = 2;
+    int chunkSize = arrayLength / THREAD_COUNT;
+    int currentStart = 0;
+    int currentEnd = chunkSize;
+    int rangeStart = 2;
+    int rangeEnd = 2;
 
     for (int i = 0; i < THREAD_COUNT; i++) {
         // Make sure last thread finishes the array.
         if (i == THREAD_COUNT - 1) {
-            current_end = array_length;
+            currentEnd = arrayLength;
         }
 
-        range_end = range_start + SEARCH_RANGE_SIZE * (current_end - current_start);
-        threads[i] = std::async(fillPrimesInRange, array + current_start, current_end - current_start,
-                                 range_start, range_end);
-        range_start = range_end;
+        rangeEnd = rangeStart + SEARCH_RANGE_SIZE * (currentEnd - currentStart);
+        threads[i] = std::async(fillPrimesInRange, array + currentStart, currentEnd - currentStart,
+                                 rangeStart, rangeEnd);
+        rangeStart = rangeEnd;
 
-        current_start += chunk_size;
-        current_end += chunk_size;
+        currentStart += chunkSize;
+        currentEnd += chunkSize;
     }
 
     for (int i = 0; i < THREAD_COUNT; i++) {
@@ -87,8 +87,8 @@ int fillArrayWithPrimes(int* array, int array_length) {
 }
 
 /** Prints the given array in a single line. */
-void printArray(int* array, int array_length) {
-    for (int i = 0; i < array_length; i++) {
+void printArray(int* array, int arrayLength) {
+    for (int i = 0; i < arrayLength; i++) {
         std::cout << array[i] << " ";
     }
     std::cout << std::endl;
@@ -97,10 +97,10 @@ void printArray(int* array, int array_length) {
 int main() {
     int* array = new int[ARRAY_TEST_SIZE];
     
-    int filling_ok = fillArrayWithPrimes(array, ARRAY_TEST_SIZE);
-    if (filling_ok != 0) {
+    int fillingOk = fillArrayWithPrimes(array, ARRAY_TEST_SIZE);
+    if (fillingOk != 0) {
         delete[] array;
-        return filling_ok;
+        return fillingOk;
     }
     printArray(array, ARRAY_TEST_SIZE);
 
