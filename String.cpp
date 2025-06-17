@@ -1,50 +1,44 @@
 #include "String.h"
 #include <cstring>
 
-String::String(const char* s) : m_s(nullptr), m_length(0) {
-    initializeFrom(s, strlen(s));
-}
-
-void String::initializeFrom(const char* s, size_t length) {
-    // Make sure to free the memory if initialized twice
-    if (m_s != nullptr) {
-        delete[] m_s;
-    }
-
-    m_s = new char[length + 1];
-    memcpy(m_s, s, length + 1);
+String::String(const char* s) : m_length(strlen(s)), m_s(new char[m_length + 1]) {
+    memcpy(m_s, s, m_length + 1);
 }
 
 String::~String() {
     delete[] m_s;
 }
 
-String::String(const String& other) : m_s(nullptr), m_length(0) {
-    initializeFrom(other.get(), other.length());
+String::String(const String& other) : m_length(other.m_length), m_s(new char[m_length + 1]) {
+    memcpy(m_s, other.get(), m_length + 1);
 }
 
 String& String::operator=(const String& other) {
-    initializeFrom(other.get(), other.length());
+    size_t length = other.m_length;
+    char* s = new char[length + 1];
+    memcpy(s, other.m_s, length + 1);
+    this->~String();
+    m_s = s;
+    m_length = length;
     return *this;
 }
 
-String::String(const char* first, const char* second) : m_s(nullptr), m_length(0) {
-    size_t firstSize = strlen(first), secondSize = strlen(second);
-    m_length = firstSize + secondSize;
-    m_s = new char[m_length + 1];
-    memcpy(m_s, first, firstSize);
-    memcpy(m_s + firstSize, second, secondSize + 1);
-}
-
-String String::operator+(const String& other) {
-    return String(get(), other.get());
+String String::operator+(const String& other) const {
+    size_t firstSize = m_length, secondSize = other.m_length;
+    size_t length = firstSize + secondSize;
+    char* s = new char[length + 1];
+    memcpy(s, get(), firstSize);
+    memcpy(s + firstSize, other.get(), secondSize + 1);
+    String result(s);
+    delete[] s;
+    return result;
 }
 
 const char* String::get() const {
     return m_s;
 }
 
-const size_t String::length() const {
+size_t String::length() const {
     return m_length;
 }
 

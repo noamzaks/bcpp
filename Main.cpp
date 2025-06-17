@@ -5,6 +5,7 @@
 int main() {
     String hi("Hello");
     std::cout << hi << std::endl;
+    hi = hi;
     hi = hi + String(" world!");
     std::cout << hi << std::endl;
 }
