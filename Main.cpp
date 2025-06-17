@@ -1,14 +1,27 @@
 #include <iostream>
 
+constexpr uint64_t SMALL_PRIMES[] = {2, 3, 5, 7}; 
+
 /**
  * @return true if the number is a prime
  */
-bool isPrime(int n) {
+bool isPrime(uint64_t n) {
     if (n <= 1) {
         return false;
     }
 
-    for (int i = 2; i * i <= n; i++) {
+    // Check small primes initially.
+    for (uint64_t i : SMALL_PRIMES) {
+        if (n == i) {
+            return true;
+        }
+        if (n % i == 0) {
+            return false;
+        }
+    }
+
+    // Can skip even numbers now, since we already checked 2.
+    for (uint64_t i = 3; i * i <= n; i += 2) {
         if (n % i == 0) {
             return false;
         }
@@ -17,13 +30,8 @@ bool isPrime(int n) {
     return true;
 }
 
-/**
- * Simple program to input a number and print its square root.
- *
- * @return 0 if succesful, negative number for error
- */
 int userCheckPrime() {
-    int userInput = -1;
+    uint64_t userInput = -1;
 
     std::cout << "Please enter a number" << std::endl;
 
