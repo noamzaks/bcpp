@@ -16,7 +16,7 @@ class String
     String operator+(const String& other);
 
     const char* get() const;
-    const int length() const;
+    const size_t length() const;
 
   private:
     void initializeFrom(const char* s, size_t length);

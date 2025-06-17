@@ -44,7 +44,7 @@ const char* String::get() const {
     return m_s;
 }
 
-const int String::length() const {
+const size_t String::length() const {
     return m_length;
 }
 
