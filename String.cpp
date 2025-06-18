@@ -66,12 +66,7 @@ size_t String::rfind(const String& other) const {
         return -1;
     }
 
-    size_t start = m_length - 1 - other.m_length;
-    if (m_length == other.m_length) {
-        start = 0;
-    }
-
-    for (size_t index = start;; index--) {
+    for (size_t index = m_length - other.m_length;; index--) {
         if (memcmp(m_s + index, other.m_s, other.m_length) == 0) {
             return index;
         }
