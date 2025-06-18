@@ -30,20 +30,6 @@ int main() {
         assert(d->value == 5);
     }
 
-    std::cout << "Starting Stage 1" << std::endl;
-    // Should be called once.
-    {
-        auto d = makeUnique<Demo>(5);
-        auto other(d);
-        other->value = 2;
-        other = d;
-        other->value = 2;
-        assert(other->value == 2);
-        assert(d->value == 5);
-        d = makeUnique<Demo>(2);
-        std::cout << "Should have been destructed by now!" << std::endl;
-    }
-
     std::cout << "Starting Stage 2" << std::endl;
     {
         auto d = std::move(makeUnique<Demo>(5));

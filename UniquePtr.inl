@@ -20,20 +20,6 @@ UniquePtr<T>::~UniquePtr() {
 }
 
 template <typename T>
-UniquePtr<T>::UniquePtr(const UniquePtr& other) : m_inner(nullptr) {
-    if (other.m_inner) {
-        m_inner = new T(*other.m_inner);
-    }
-}
-
-template <typename T>
-UniquePtr<T>& UniquePtr<T>::operator=(const UniquePtr& other) {
-    this->~UniquePtr();
-    m_inner = new T(*other.m_inner);
-    return *this;
-}
-
-template <typename T>
 UniquePtr<T>::UniquePtr(UniquePtr&& other) : m_inner(std::move(other.m_inner)) {
     // Intentionally left empty
 }

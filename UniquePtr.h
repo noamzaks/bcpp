@@ -10,10 +10,8 @@ class UniquePtr final
     UniquePtr(T* inner);
     /** Destructs the pointer, if relevant. */
     ~UniquePtr();
-    /** Copies the object inside. */
-    UniquePtr(const UniquePtr& other);
-    /** Destructs then copies the object inside from the other pointer. */
-    UniquePtr& operator=(const UniquePtr& other);
+    UniquePtr(const UniquePtr& other) = delete;
+    UniquePtr& operator=(const UniquePtr& other) = delete;
     /** Moves the other object inside. */
     UniquePtr(UniquePtr&& other);
     /** Moves the other object inside. */
