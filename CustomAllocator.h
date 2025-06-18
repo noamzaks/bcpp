@@ -3,8 +3,8 @@
 class AllocationInformation final
 {
   public:
-    AllocationInformation(size_t size, AllocationInformation* preivous = nullptr,
-                          AllocationInformation* next = nullptr);
+    AllocationInformation(size_t size);
+    AllocationInformation(size_t size, AllocationInformation* preivous, AllocationInformation* next);
     ~AllocationInformation();
 
     size_t size() const;
@@ -23,18 +23,18 @@ class AllocationInformation final
     /** Returns the allocation information stored for the given pointer returned by `new`. */
     static AllocationInformation* getInformation(void* p);
 
-    friend void* operator new(size_t n);
-    friend void operator delete(void* p) noexcept;
-
   private:
     /** Updates the global head & tail about this new allocation information. */
     void updateGlobalListOnCreation();
     /** Updates the global head & tail about this allocation information being removed. */
     void updateGlobalListOnDeletion();
     /** Updates the next & previous about this allocation information being removed. */
-    void updateNeighborsOnDeletion() const;
+    void updateNeighborsOnDeletion();
 
     size_t m_size;
     AllocationInformation* m_previous;
     AllocationInformation* m_next;
+
+    static AllocationInformation* s_head;
+    static AllocationInformation* s_tail;
 };

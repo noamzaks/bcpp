@@ -5,8 +5,11 @@
 
 #include "CustomAllocator.h"
 
-static AllocationInformation* head = nullptr;
-static AllocationInformation* tail = nullptr;
+AllocationInformation* AllocationInformation::s_head = nullptr;
+AllocationInformation* AllocationInformation::s_tail = nullptr;
+
+AllocationInformation::AllocationInformation(size_t size) : AllocationInformation(size, s_tail, nullptr) {
+}
 
 AllocationInformation::AllocationInformation(size_t size, AllocationInformation* previous, AllocationInformation* next)
     : m_size(size), m_next(next) {
@@ -49,26 +52,26 @@ AllocationInformation* AllocationInformation::getInformation(void* p) {
 }
 
 void AllocationInformation::updateGlobalListOnCreation() {
-    if (head == nullptr) {
-        head = this;
-        tail = this;
+    if (s_head == nullptr) {
+        s_head = this;
+        s_tail = this;
     }
     else {
-        tail->setNext(this);
-        tail = this;
+        s_tail->setNext(this);
+        s_tail = this;
     }
 }
 
 void AllocationInformation::updateGlobalListOnDeletion() {
-    if (head == this) {
-        head = getNext();
+    if (s_head == this) {
+        s_head = getNext();
     }
-    if (tail == this) {
-        tail = getPrevious();
+    if (s_tail == this) {
+        s_tail = getPrevious();
     }
 }
 
-void AllocationInformation::updateNeighborsOnDeletion() const {
+void AllocationInformation::updateNeighborsOnDeletion() {
     if (this->getPrevious() != nullptr) {
         this->getPrevious()->setNext(this->getNext());
     }
@@ -78,7 +81,7 @@ void AllocationInformation::updateNeighborsOnDeletion() const {
 }
 
 void AllocationInformation::printAllInformation() {
-    AllocationInformation* current = head;
+    AllocationInformation* current = s_head;
     while (current != nullptr) {
         std::cout << current->size() << " bytes at " << current->getAddress() << std::endl;
         current = current->getNext();
@@ -90,11 +93,11 @@ void AllocationInformation::printAllInformation() {
 void* operator new(size_t n) {
     void* base = malloc(n + sizeof(AllocationInformation));
 
-    if (base == NULL) {
+    if (base == nullptr) {
         throw std::bad_alloc();
     }
 
-    AllocationInformation* info = new (base) AllocationInformation(n, tail);
+    AllocationInformation* info = new (base) AllocationInformation(n);
 
     return info->getAddress();
 }
