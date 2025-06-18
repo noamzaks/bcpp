@@ -12,10 +12,16 @@ AllocationInformation::AllocationInformation(size_t size) : AllocationInformatio
 }
 
 AllocationInformation::AllocationInformation(size_t size, AllocationInformation* previous, AllocationInformation* next)
-    : m_size(size), m_next(next) {
-    m_previous = previous;
-    m_next = next;
-    updateGlobalListOnCreation();
+    : m_size(size), m_previous(previous), m_next(next) {
+    // Update the global head & tail about this new allocation information.
+    if (s_head == nullptr) {
+        s_head = this;
+        s_tail = this;
+    }
+    else {
+        s_tail->setNext(this);
+        s_tail = this;
+    }
 }
 
 AllocationInformation::~AllocationInformation() {
@@ -49,17 +55,6 @@ void* AllocationInformation::getAddress() const {
 
 AllocationInformation* AllocationInformation::getInformation(void* p) {
     return (AllocationInformation*)((char*)p - sizeof(AllocationInformation));
-}
-
-void AllocationInformation::updateGlobalListOnCreation() {
-    if (s_head == nullptr) {
-        s_head = this;
-        s_tail = this;
-    }
-    else {
-        s_tail->setNext(this);
-        s_tail = this;
-    }
 }
 
 void AllocationInformation::updateGlobalListOnDeletion() {

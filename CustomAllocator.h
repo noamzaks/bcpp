@@ -24,8 +24,6 @@ class AllocationInformation final
     static AllocationInformation* getInformation(void* p);
 
   private:
-    /** Updates the global head & tail about this new allocation information. */
-    void updateGlobalListOnCreation();
     /** Updates the global head & tail about this allocation information being removed. */
     void updateGlobalListOnDeletion();
     /** Updates the next & previous about this allocation information being removed. */
