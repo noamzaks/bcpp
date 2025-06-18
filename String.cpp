@@ -1,7 +1,10 @@
 #include "String.h"
 #include <cstring>
 
-String::String(const char* s) : m_length(strlen(s)), m_s(new char[strlen(s) + 1]) {
+String::String(const char* s) : String(s, strlen(s)) {
+}
+
+String::String(const char* s, size_t length) : m_length(length), m_s(new char[length + 1]) {
     memcpy(m_s, s, m_length + 1);
 }
 

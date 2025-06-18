@@ -17,6 +17,8 @@ class String
     size_t length() const;
 
   private:
+    String(const char* s, size_t length);
+
     size_t m_length;
     char* m_s;
 };
