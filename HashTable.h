@@ -25,11 +25,13 @@ template <typename T>
 class HashTable
 {
   public:
-    HashTable();
+    HashTable() = default;
+    ~HashTable() = default;
     HashTable(const HashTable<T>& other);
     HashTable& operator=(const HashTable<T>& other);
 
     T& operator[](const std::string& key);
+    const T& operator[](const std::string& key) const;
     void insert(const std::string& key, const T& value);
     void pop(const std::string& key);
 

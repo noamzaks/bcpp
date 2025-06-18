@@ -1,4 +1,5 @@
 #include "HashTable.h"
+#include <algorithm>
 
 HashTableKeyNotFoundException::HashTableKeyNotFoundException(const std::string& key)
     : std::runtime_error("HashTable: Key not found: " + key) {
@@ -10,20 +11,8 @@ HashTableValueNotFoundException<T>::HashTableValueNotFoundException(const T& v)
 }
 
 template <typename T>
-HashTable<T>::HashTable() {
-}
-
-template <typename T>
 void HashTable<T>::initializeFrom(const HashTable<T>& other) {
-    for (size_t i = 0; i < HASH_TABLE_SIZE; i++) {
-        auto& item = other.m_items[i];
-        if (item == nullptr) {
-            m_items[i] = nullptr;
-        }
-        else {
-            m_items[i] = std::make_unique<std::pair<std::string, T>>(*item);
-        }
-    }
+    std::copy(other.m_items, other.m_items + HASH_TABLE_SIZE, m_items);
 }
 
 template <typename T>
@@ -44,6 +33,11 @@ T& HashTable<T>::operator[](const std::string& key) {
         throw HashTableKeyNotFoundException(key);
     }
     return item->second;
+}
+
+template <typename T>
+const T& HashTable<T>::operator[](const std::string& key) const {
+    return const_cast<HashTable<T>*>(this)[key];
 }
 
 template <typename T>
@@ -76,7 +70,7 @@ const std::string& HashTable<T>::find(const T& item) const {
             return m_items[i]->first;
         }
     }
-    throw HashTableValueNotFoundException(item);
+    throw HashTableValueNotFoundException<T>(item);
 }
 
 template <typename T>
@@ -92,7 +86,5 @@ std::unique_ptr<std::pair<std::string, T>>& HashTable<T>::get(const std::string&
 
 template <typename T>
 const std::unique_ptr<std::pair<std::string, T>>& HashTable<T>::get(const std::string& key) const {
-    // TODO: Couldn't find out a way to do this without duplicating code.
-    // Can continue searching.
-    return m_items[std::hash<std::string>{}(key) % HASH_TABLE_SIZE];
+    return const_cast<HashTable<T>*>(this)->get(key);
 }
