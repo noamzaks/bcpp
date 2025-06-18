@@ -39,4 +39,5 @@ int main() {
     assert(String("Hola").substr(2) == "la");
     assert(String("Hola").substr(2, 6) == "la");
     assert(String("Hola").substr(2, 3) == "l");
+    assert(String("hi").rfind("HELLO WORLD THIS SHOULD NOT SEGFAULT EVER") == -1);
 }
