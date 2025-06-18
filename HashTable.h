@@ -1,6 +1,8 @@
 #pragma once
 
+#include <array>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -42,10 +44,10 @@ class HashTable
   private:
     void initializeFrom(const HashTable<T>& other);
 
-    std::unique_ptr<std::pair<std::string, T>>& get(const std::string& key);
-    const std::unique_ptr<std::pair<std::string, T>>& get(const std::string& key) const;
+    std::optional<std::pair<std::string, T>>& get(const std::string& key);
+    const std::optional<std::pair<std::string, T>>& get(const std::string& key) const;
 
-    std::unique_ptr<std::pair<std::string, T>> m_items[HASH_TABLE_SIZE];
+    std::array<std::optional<std::pair<std::string, T>>, HASH_TABLE_SIZE> m_items;
 };
 
 #include "HashTable.inl"
