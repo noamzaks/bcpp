@@ -15,19 +15,24 @@ UniquePtr<T>::UniquePtr(T* inner) : m_inner(inner) {
 template <typename T>
 UniquePtr<T>::~UniquePtr() {
     if (m_inner) {
-        m_inner->~T();
+        delete m_inner;
     }
 }
 
 template <typename T>
-UniquePtr<T>::UniquePtr(UniquePtr&& other) : m_inner(std::move(other.m_inner)) {
+UniquePtr<T>::UniquePtr(UniquePtr&& other) : m_inner(std::exchange(other.m_inner, nullptr)) {
     // Intentionally left empty
 }
 
 template <typename T>
 UniquePtr<T>& UniquePtr<T>::operator=(UniquePtr&& other) noexcept {
-    this->~UniquePtr();
-    m_inner = std::move(other.m_inner);
+    if (this != &other) {
+        if (m_inner) {
+            delete m_inner;
+        }
+        m_inner = std::exchange(other.m_inner, nullptr);
+    }
+
     return *this;
 }
 
@@ -62,6 +67,6 @@ UniquePtr<T>::operator T*() {
 }
 
 template <typename T, typename... Args>
-UniquePtr<T> makeUnique(Args... args) {
-    return UniquePtr<T>(new T(args...));
+UniquePtr<T> makeUnique(Args&&... args) {
+    return UniquePtr<T>(new T(std::forward<Args>(args)...));
 }

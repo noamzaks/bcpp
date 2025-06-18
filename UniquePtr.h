@@ -29,6 +29,6 @@ class UniquePtr final
 };
 
 template <typename T, typename... Args>
-UniquePtr<T> makeUnique(Args...);
+UniquePtr<T> makeUnique(Args&&...);
 
 #include "UniquePtr.inl"
